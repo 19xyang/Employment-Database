@@ -110,10 +110,23 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM employee_have_job")
-  names = []
+  cursor = g.conn.execute("SELECT * FROM employee_have_job")
+  results = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    results.append({'Employee ID':result['eid'],
+                'Name':result['name'],
+                'Class_year':result['class_year'],
+                'Major':result['major'],
+                'University':result['university'],
+                'Education':result['education_level'],
+                'Linkedin':result['linkedin'],
+                'Job ID':result['jid'],
+                'Industry':result['industry'],
+                'Job Title':result['job_title'],
+                'Salary':result['salary'],
+                'Type':result['type'],
+                'Company':result['company_name']})# can also be accessed using result[0]
+
   cursor.close()
 
   #
@@ -142,7 +155,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  context = dict(data = results)
 
 
   #
@@ -161,13 +174,13 @@ def index():
 #
 @app.route('/events')
 def employee_have_job():
-  cursor = g.conn.execute("SELECT eid, name, class, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name FROM employee_have_job")
+  cursor = g.conn.execute("SELECT eid, name, class_year, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name FROM employee_have_job")
   events = []
   for result in cursor:
     temp = []
     temp.append(result['eid'])
     temp.append(result['name'])
-    temp.append(result['class'])
+    temp.append(result['class_year'])
     temp.append(result['major'])
     temp.append(result['university'])
     temp.append(result['education_level'])
@@ -199,7 +212,7 @@ def another():
 def add():
   eid = request.form['eid']
   name = request.form['name']
-  class = request.form['class']
+  class_year = request.form['class_year']
   major = request.form['major']
   university = request.form['university']
   education_level = request.form['education_level']
@@ -210,9 +223,9 @@ def add():
   salary = request.form['salary']
   type = request.form['type']
   company_name = request.form['company_name']
-  print (stu_id, name, class, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name)
+  print (eid, name, class_year, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name)
   cmd = 'INSERT INTO employee_have_job VALUES (:eid1, :name1, :class1, :major1, :university1, :education_level1, :linkedin1, :jid1, :industry1, :job_title1, :salary1, :type1, :company_name1)'
-  g.conn.execute(text(cmd),eid1=eid, name1=name, class1=class, major1=major, university1=university, education_level1=education_level, linkedin1=linkedin, jid1=jid, industry1=industry, job_title1=job_title, salary1=salary, type1=type, company_name1=company_name)
+  g.conn.execute(text(cmd),eid1=eid, name1=name, class1=class_year, major1=major, university1=university, education_level1=education_level, linkedin1=linkedin, jid1=jid, industry1=industry, job_title1=job_title, salary1=salary, type1=type, company_name1=company_name)
   return redirect('/')
 
 @app.route('/signup/', methods=['GET', 'POST'])

@@ -32,7 +32,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 DB_USER = "xy2378"
 DB_PASSWORD = "0r30ys9i"
 
-DB_SERVER = "w4111.cisxo09blonu.us-east-1.rds.amazonaws.com -U xy2378 w4111"
+DB_SERVER = "w4111.cisxo09blonu.us-east-1.rds.amazonaws.com"
 
 DATABASEURI = "postgresql://"+DB_USER+":"+DB_PASSWORD+"@"+DB_SERVER+"/w4111"
 
@@ -44,12 +44,12 @@ engine = create_engine(DATABASEURI)
 
 
 # Here we create a test table and insert some values in it
-engine.execute("""DROP TABLE IF EXISTS test;""")
-engine.execute("""CREATE TABLE IF NOT EXISTS test (
-  id serial,
-  name text
-);""")
-engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+#engine.execute("""DROP TABLE IF EXISTS test;""")
+#engine.execute("""CREATE TABLE IF NOT EXISTS test (
+  #id serial,
+  #name text
+#);""")
+#engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 
@@ -110,7 +110,7 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
+  cursor = g.conn.execute("SELECT name FROM employee_have_job")
   names = []
   for result in cursor:
     names.append(result['name'])  # can also be accessed using result[0]
@@ -159,6 +159,36 @@ def index():
 # notice that the functio name is another() rather than index()
 # the functions for each app.route needs to have different names
 #
+@app.route('/events')
+def employee_have_job():
+  cursor = g.conn.execute("SELECT eid, name, class, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name FROM employee_have_job")
+  events = []
+  for result in cursor:
+    temp = []
+    temp.append(result['eid'])
+    temp.append(result['name'])
+    temp.append(result['class'])
+    temp.append(result['major'])
+    temp.append(result['university'])
+    temp.append(result['education_level'])
+    temp.append(result['linkedin'])
+    temp.append(result['jid'])
+    temp.append(result['industry'])
+    temp.append(result['job_title'])
+    temp.append(result['salary'])
+    temp.append(result['type'])
+    temp.append(result['company_name'])
+    employee_have_job.append(temp)
+  cursor.close()
+
+  context = dict(data = employee_have_job)
+
+  return render_template("employee_have_job.html", **context)
+
+
+
+
+
 @app.route('/another')
 def another():
   return render_template("anotherfile.html")
@@ -167,17 +197,40 @@ def another():
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
+  eid = request.form['eid']
   name = request.form['name']
-  print (name)
-  cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)';
-  g.conn.execute(text(cmd), name1 = name, name2 = name);
+  class = request.form['class']
+  major = request.form['major']
+  university = request.form['university']
+  education_level = request.form['education_level']
+  linkedin = request.form['linkedin']
+  jid = request.form['jid']
+  industry = request.form['industry']
+  job_title = request.form['job_title']
+  salary = request.form['salary']
+  type = request.form['type']
+  company_name = request.form['company_name']
+  print (stu_id, name, class, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name)
+  cmd = 'INSERT INTO employee_have_job VALUES (:eid1, :name1, :class1, :major1, :university1, :education_level1, :linkedin1, :jid1, :industry1, :job_title1, :salary1, :type1, :company_name1)'
+  g.conn.execute(text(cmd),eid1=eid, name1=name, class1=class, major1=major, university1=university, education_level1=education_level, linkedin1=linkedin, jid1=jid, industry1=industry, job_title1=job_title, salary1=salary, type1=type, company_name1=company_name)
   return redirect('/')
 
+@app.route('/signup/', methods=['GET', 'POST'])
+def signup():
+  form = SignUpForm(request.form)
+  if request.method == 'POST' and form.validate():
+      # add method to store new user
+      return redirect('/')
+  return render_template('signup.html', form=form)
 
-@app.route('/login')
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+  form = LogInForm(request.form)
+  if request.method == 'POST' and form.validate():
+    # add method to authenticate current user
+    return redirect('/')
+  return render_template('login.html', form=form)
+
 
 
 if __name__ == "__main__":

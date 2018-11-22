@@ -12,6 +12,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, session
+from flask_table import Table, Col, LinkCol
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -295,7 +296,7 @@ def edit_information(eid):
         flash('Data should not be null.')
         return redirect('/edit_information/{eid}'.format(eid=eid))
     cmd = 'UPDATE employee_have_job SET name=%s, class_year=%s, major=%s, university=%s,education_level=%s, linkedin=%s,jid=%s,industry=%s,job_title=%s,type=%s,company_name=%s, WHERE eid=%s;'
-    g.conn.execute(cmd, (name,class_year,major,university,education_level,linkedin, jid, industry, job_title, type, company_name, ,eid))
+    g.conn.execute(cmd, (name,class_year,major,university,education_level,linkedin, jid, industry, job_title, type, company_name,eid))
     return redirect('/')
 
 
@@ -311,3 +312,27 @@ def delete_information(eid):
     #cmd="DELETE FROM employee_have_job WHERE eid = %s;"
     g.conn.execute("DELETE FROM employee_have_job WHERE eid = %s;", (eid,))
     return redirect("/")
+
+if __name__ == "__main__":
+  import click
+
+  @click.command()
+  @click.option('--debug', is_flag=True)
+  @click.option('--threaded', is_flag=True)
+  @click.argument('HOST', default='0.0.0.0')
+  @click.argument('PORT', default=8111, type=int)
+  def run(debug, threaded, host, port):
+    """
+    This function handles command line parameters.
+    Run the server using
+        python server.py
+    Show the help text using
+        python server.py --help
+    """
+
+    HOST, PORT = host, port
+    print ("running on %s:%d" % (HOST, PORT))
+    app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
+
+  app.secret_key = 'supersupersupersecretkey'
+  run()

@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Welcome Back, {{ name }}!</h1>
+<br>
+<h2>Your Tracking Accounts</h2>
+<br>
+{{table}}
+<br>
+<a href = '/add_information'>click here to add a trackingaccount</a>
+<b><a href = '/logout'>click here to log out</a></b>
+{% endblock %}

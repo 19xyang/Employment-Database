@@ -11,7 +11,7 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response, session
+from flask import Flask, request, render_template, g, redirect, Response, session, flash, url_for
 from flask_table import Table, Col, LinkCol
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -178,10 +178,10 @@ def signup():
     # fetch sign-up info, all fields cannot be null.
     USERNAME = str(request.form['username'])
     PASSWORD = str(request.form['password'])
-    if not (Employee_ID and USERNAME and PASSWORD):
+    if not (USERNAME and PASSWORD):
         flash('Data cannot be null.')
         return redirect(url_for('signup'))
-    cursor = g.conn.execute("SELECT MAX(uid) FROM Users;")
+    cursor = g.conn.execute("SELECT MAX(eid) FROM users;")
     curuid = cursor.next()[0] + 1
     cursor.close()
     try:

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>New Tracking Account</h1>
+<br>
+<form action="/add_information" method="POST">
+  <p>Employee_id: <input type="text" name="eid">
+  <p>Name: <input type="text" name="name">
+  <p>Class Year: <input type="text" name="class_year">
+  <p>Major: <input type="text" name="major">
+  <p>University: <input type="text" name="university">
+  <p>Education: <input type="text" name="education_level">
+  <p>Linkedin: <input type="text" name="linkedin">
+  <p>Job_id: <input type="text" name="jid">
+  <p>Industry: <input type="text" name="industry">
+  <p>Job: <input type="text" name="job_title">
+  <p>Salary: <input type="text" name="salary">
+  <p>Type: <input type="text" name="type">
+  <p>Company: <input type="text" name="company_name"></p>
+  <input type="submit" value="Add">
+</form>
+
+<b><a href = '/'>click here to go back</a></b>
+{% endblock %}

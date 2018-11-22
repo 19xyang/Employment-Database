@@ -1,0 +1,11 @@
+{% block body %}
+<b>Warning: This is a dangerous action!</b>
+<br>
+<b>Are you sure you want to delete the whole tracking account?</b>
+<br>
+<form action="/delete_information/{{ eid }}" method="post">
+    <input type="submit" value="Delete">
+</form>
+<br>
+<b><a href = '/'>click here to go back</a></b>
+{% endblock %}

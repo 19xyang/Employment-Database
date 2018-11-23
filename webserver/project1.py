@@ -104,7 +104,7 @@ def index():
         #storing sql query as a string variable protexts against sql injections (I think)
         #qname = "SELECT name FROM Users WHERE uid = %s;"
         #cursor = g.conn.execute(qname, (uid,))
-        cursor = g.conn.execute("SELECT name FROM users "
+        cursor = g.conn.execute("SELECT username FROM users "
                                "WHERE eid = %s", (eid,))
         name = cursor.next()[0]
         cursor.close()
@@ -267,19 +267,19 @@ def edit_information(eid):
         record = cursor.next()
         cursor.close()
         return render_template("edit_information.html",
-        eid = Col('eid', show=False),
-        name = Col('name'),
-        class_year = Col('class_year'),
-        major = Col('major'),
-        university = Col('university'),
-        education_level = Col('education_level'),
-        linkedin = Col('linkedin'),
-        jid = Col('jid'),
-        industry = Col('industry'),
-        job_title = Col('job_title'),
-        salary = Col('salary'),
-        type = Col('type'),
-        company_name = Col('company_name'))
+            eid = record['eid'],
+            name = record['name'],
+            class_year = record['class_year'],
+            major = record['major'],
+            university = record['university'],
+            education_level = record['education_level'],
+            linkedin = record['linkedin'],
+            jid = record['jid'],
+            industry = record['industry'],
+            job_title = record['job_title'],
+            salary = record['salary'],
+            type = record['type'],
+            company_name = record['company_name'])
     name = request.form['name']
     class_year = request.form['class_year']
     major = request.form['major']
@@ -292,7 +292,7 @@ def edit_information(eid):
     salary = request.form['salary']
     type = request.form['type']
     company_name = request.form['company_name']
-    if not eid or name or class_year or major or university or education_level or jid or industry or job_title or company_name or type:
+    if not eid or not name or not class_year or not major or not university or not education_level or not jid or not industry or not job_title or not company_name or not type:
         flash('Data should not be null.')
         return redirect('/edit_information/{eid}'.format(eid=eid))
     cmd = 'UPDATE employee_have_job SET name=%s, class_year=%s, major=%s, university=%s,education_level=%s, linkedin=%s,jid=%s,industry=%s,job_title=%s,type=%s,company_name=%s, WHERE eid=%s;'

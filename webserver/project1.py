@@ -104,7 +104,7 @@ def index():
         #storing sql query as a string variable protexts against sql injections (I think)
         #qname = "SELECT name FROM Users WHERE uid = %s;"
         #cursor = g.conn.execute(qname, (uid,))
-        cursor = g.conn.execute("SELECT name FROM employee_have_job "
+        cursor = g.conn.execute("SELECT name FROM users "
                                "WHERE eid = %s", (eid,))
         name = cursor.next()[0]
         cursor.close()
@@ -113,19 +113,19 @@ def index():
         cursor = g.conn.execute("SELECT * FROM employee_have_job WHERE eid = %s;", (session['eid'],))
         results = []
         for result in cursor:
-            results.append({'Employee ID':result['eid'],
-                'Name':result['name'],
-                'Class_year':result['class_year'],
-                'Major':result['major'],
-                'University':result['university'],
-                'Education':result['education_level'],
-                'Linkedin':result['linkedin'],
-                'Job ID':result['jid'],
-                'Industry':result['industry'],
-                'Job Title':result['job_title'],
-                'Salary':result['salary'],
-                'Type':result['type'],
-                'Company':result['company_name']})
+            results.append({'eid':result['eid'],
+                'name':result['name'],
+                'class_year':result['class_year'],
+                'major':result['major'],
+                'university':result['university'],
+                'education':result['education_level'],
+                'linkedin':result['linkedin'],
+                'job ID':result['jid'],
+                'industry':result['industry'],
+                'job Title':result['job_title'],
+                'salary':result['salary'],
+                'type':result['type'],
+                'company':result['company_name']})
         cursor.close()
         table = Basicinformation(results)
         table.border = True
@@ -245,7 +245,7 @@ def add_information():
     salary = request.form['salary']
     type = request.form['type']
     company_name = request.form['company_name']
-    if not eid or name or class_year or major or university or education_level or jid or industry or job_title or company_name or type:
+    if not eid or not name or not jid or not company_name:
         flash('Data should not be null.')
         return redirect(url_for('add_information'))
 

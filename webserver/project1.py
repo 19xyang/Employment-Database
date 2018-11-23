@@ -118,14 +118,14 @@ def index():
                 'class_year':result['class_year'],
                 'major':result['major'],
                 'university':result['university'],
-                'education':result['education_level'],
+                'education_level':result['education_level'],
                 'linkedin':result['linkedin'],
-                'job ID':result['jid'],
+                'jid':result['jid'],
                 'industry':result['industry'],
-                'job Title':result['job_title'],
+                'job_title':result['job_title'],
                 'salary':result['salary'],
                 'type':result['type'],
-                'company':result['company_name']})
+                'company_name':result['company_name']})
         cursor.close()
         table = Basicinformation(results)
         table.border = True
@@ -206,7 +206,7 @@ def signup():
 # (third-party library)
 ##################################################################################
 class Basicinformation(Table):
-    eid = Col('eid', show=False)
+    eid = Col('eid')
     name = Col('name')
     class_year = Col('class_year')
     major = Col('major')
@@ -280,18 +280,18 @@ def edit_information(eid):
             salary = record['salary'],
             type = record['type'],
             company_name = record['company_name'])
-    name = request.form['name']
-    class_year = request.form['class_year']
-    major = request.form['major']
-    university = request.form['university']
-    education_level = request.form['education_level']
-    linkedin = request.form['linkedin']
-    jid = request.form['jid']
-    industry = request.form['industry']
-    job_title = request.form['job_title']
-    salary = request.form['salary']
-    type = request.form['type']
-    company_name = request.form['company_name']
+    name = request.form['name'].rstrip()
+    class_year = request.form['class_year'].rstrip()
+    major = request.form['major'].rstrip()
+    university = request.form['university'].rstrip()
+    education_level = request.form['education_level'].rstrip()
+    linkedin = request.form['linkedin'].rstrip()
+    jid = request.form['jid'].rstrip()
+    industry = request.form['industry'].rstrip()
+    job_title = request.form['job_title'].rstrip()
+    salary = request.form['salary'].rstrip()
+    type = request.form['type'].rstrip()
+    company_name = request.form['company_name'].rstrip()
     if not eid or not name or not class_year or not major or not university or not education_level or not jid or not industry or not job_title or not company_name or not type:
         flash('Data should not be null.')
         return redirect('/edit_information/{eid}'.format(eid=eid))
@@ -303,7 +303,7 @@ def edit_information(eid):
 ##################################################################################
 # delete infomation
 ##################################################################################
-@app.route('/delete_information/<int:aid>', methods=['GET', 'POST'])
+@app.route('/delete_information/<int:eid>', methods=['GET', 'POST'])
 def delete_information(eid):
     if request.method == 'GET':
         return render_template("delete_information.html", eid=eid)

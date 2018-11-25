@@ -332,7 +332,7 @@ class wishlist(Table):
 ##################################################################################
 @app.route('/wishlist', methods=['POST', 'GET'])
 def wishlist():
-    cursor = g.conn.execute("SELECT * FROM wishlist WHERE eid = %s ORDER BY jid;", (eid,))
+    cursor = g.conn.execute("SELECT * FROM add_w WHERE eid = %s ORDER BY jid;", (eid,))
     results = []
     for result in cursor:
         results.append({'eid': result['eid'],

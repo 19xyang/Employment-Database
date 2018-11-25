@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Edit Wishlist</h1>
+<br>
+<form action="/edit_people/{{ eid }}" method="POST">
+  <input type="text" name="eid" value="{{ eid }}">
+  <input type="text" name="jid" value="{{ jid }}">
+  <input type="submit" value="Submit">
+</form>
+
+<b><a href = '/wishlist'>click here to go back</a></b>
+{% endblock %}

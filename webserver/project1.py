@@ -313,6 +313,92 @@ def delete_information(eid):
     g.conn.execute("DELETE FROM employee_have_job WHERE eid = %s;", (eid,))
     return redirect("/")
 
+
+##################################################################################
+# Use Flask_table module to generate html table for People
+# (third-party library)
+##################################################################################
+class wishlist(Table):
+    eid = Col('eid')
+    jid = Col('jid')
+    # Called edit_people() when the link is clicked.
+    edit = LinkCol('Edit', 'edit_wishlist', url_kwargs=dict(eid='eid'))
+    # Called delete_people() when the link is clicked.
+    delete = LinkCol('Delete', 'delete_wishlist', url_kwargs=dict(eid='eid'))
+
+
+##################################################################################
+# view people
+##################################################################################
+@app.route('/wishlist', methods=['POST', 'GET'])
+def wishlist():
+    cursor = g.conn.execute("SELECT * FROM wishlist WHERE eid = %s ORDER BY jid;", (eid,))
+    results = []
+    for result in cursor:
+        results.append({'eid': result['eid'],
+                        'jid': result['jid']})
+    cursor.close()
+    table = WishlistResults(results)
+    table.border = True
+    return render_template('wishlist.html', table=table)
+
+
+##################################################################################
+# add new people
+##################################################################################
+@app.route('/add_wishlist', methods=['POST', 'GET'])
+def add_wishlist():
+    if request.method == 'GET':
+        return render_template("add_wishlist.html")
+    eid=request.form['eid']
+    jid = request.form['jid']
+    if not eid or not jid:
+        flash('Data should not be null.')
+        return redirect(url_for('add_wishlist'))
+    cmd = 'INSERT INTO add_w VALUES (:eid1,:jid1)'
+    g.conn.execute(text(cmd),eid1=eid, jid1=jid)
+    return redirect(url_for('wishlist'))
+
+
+##################################################################################
+# edit people record
+##################################################################################
+@app.route('/edit_wishlist/<int:eid>', methods=['GET', 'POST'])
+def edit_wishlist(eid):
+    if request.method == 'GET':
+        cursor = g.conn.execute("SELECT * FROM add_w WHERE eid = %s;", (eid,))
+        record = cursor.next()
+        cursor.close()
+        return render_template("edit_wishlist.html", eid=eid, jid=record['jid'])
+
+    jid = request.form['jid'].rstrip()
+    if not jid:
+        flash('Job ID should not be null.')
+        return redirect('/edit_wishlist/{eid}'.format(eid=eid))
+
+
+    g.conn.execute("UPDATE add_w SET jid=%s"
+                       "WHERE eid=%s;", (jid ,eid))
+    return redirect(url_for('wishlist'))
+
+
+##################################################################################
+# delete people record
+##################################################################################
+@app.route('/delete_wishlist/<int:eid>', methods=['GET', 'POST'])
+def delete_wishlist(eid):
+    if request.method == 'GET':
+        return render_template("delete_wishlist.html", eid=eid)
+
+    # delete the item from the database
+    try:
+        g.conn.execute("DELETE FROM add_w WHERE eid = %s;", (eid,))
+        flash('Wishlist deleted successfully!')
+    except:
+        flash('Wishlist cannot be deleted!')
+        return redirect(url_for("wishlist"))
+    return redirect(url_for("wishlist"))
+
 if __name__ == "__main__":
   import click
 

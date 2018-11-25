@@ -248,11 +248,14 @@ def add_information():
     if not eid or not name or not jid or not company_name:
         flash('Data should not be null.')
         return redirect(url_for('add_information'))
-
-    # create new record in db
-    print (eid, name, class_year, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name)
-    cmd = 'INSERT INTO employee_have_job VALUES (:eid1, :name1, :class1, :major1, :university1, :education_level1, :linkedin1, :jid1, :industry1, :job_title1, :salary1, :type1, :company_name1)'
-    g.conn.execute(text(cmd),eid1=eid, name1=name, class1=class_year, major1=major, university1=university, education_level1=education_level, linkedin1=linkedin, jid1=jid, industry1=industry, job_title1=job_title, salary1=salary, type1=type, company_name1=company_name)
+    try:
+        # create new record in db
+        print (eid, name, class_year, major, university, education_level, linkedin, jid, industry, job_title, salary, type, company_name)
+        cmd = 'INSERT INTO employee_have_job VALUES (:eid1, :name1, :class1, :major1, :university1, :education_level1, :linkedin1, :jid1, :industry1, :job_title1, :salary1, :type1, :company_name1)'
+        g.conn.execute(text(cmd),eid1=eid, name1=name, class1=class_year, major1=major, university1=university, education_level1=education_level, linkedin1=linkedin, jid1=jid, industry1=industry, job_title1=job_title, salary1=salary, type1=type, company_name1=company_name)
+    except:
+        flash('Information cannot be added!')
+        return redirect("add_information")
     return redirect(url_for('add_information'))
 
 
@@ -295,8 +298,12 @@ def edit_information(eid):
     if not eid or not name or not class_year or not major or not university or not education_level or not jid or not industry or not job_title or not company_name or not type:
         flash('Data should not be null.')
         return redirect('/edit_information/{eid}'.format(eid=eid))
-    cmd = 'UPDATE employee_have_job SET name=%s, class_year=%s, major=%s, university=%s,education_level=%s, linkedin=%s,jid=%s,industry=%s,job_title=%s,type=%s,company_name=%s WHERE eid=%s;'
-    g.conn.execute(cmd, (name,class_year,major,university,education_level,linkedin, jid, industry, job_title, type, company_name,eid))
+    try:
+        cmd = 'UPDATE employee_have_job SET name=%s, class_year=%s, major=%s, university=%s,education_level=%s, linkedin=%s,jid=%s,industry=%s,job_title=%s,type=%s,company_name=%s WHERE eid=%s;'
+        g.conn.execute(cmd, (name,class_year,major,university,education_level,linkedin, jid, industry, job_title, type, company_name,eid))
+    except:
+        flash('Information cannot be updated!')
+        return redirect('/')
     return redirect('/')
 
 
@@ -310,7 +317,11 @@ def delete_information(eid):
 
     #eid = str(request.form['eid'])
     #cmd="DELETE FROM employee_have_job WHERE eid = %s;"
-    g.conn.execute("DELETE FROM employee_have_job WHERE eid = %s;", (eid,))
+    try:
+        g.conn.execute("DELETE FROM employee_have_job WHERE eid = %s;", (eid,))
+    except:
+        flash('Information cannot be deleted!')
+        return redirect("/")
     return redirect("/")
 
 
@@ -355,8 +366,12 @@ def add_wishlist():
     if not eid or not jid:
         flash('Data should not be null.')
         return redirect(url_for('add_wishlist'))
-    cmd = 'INSERT INTO wishlist VALUES (:eid1,:jid1)'
-    g.conn.execute(text(cmd),eid1=eid, jid1=jid)
+    try:
+        cmd = 'INSERT INTO wishlist VALUES (:eid1,:jid1)'
+        g.conn.execute(text(cmd),eid1=eid, jid1=jid)
+    except:
+        flash('Wishlist cannot be created.')
+        return redirect(url_for('add_wishlist'))
     return redirect(url_for('wishlist'))
 
 
@@ -376,9 +391,12 @@ def edit_wishlist(eid):
         flash('Job ID should not be null.')
         return redirect('/edit_wishlist/{eid}'.format(eid=eid))
 
-
-    g.conn.execute("UPDATE wishlist SET jid=%s"
-                       "WHERE eid=%s;", (jid ,eid))
+    try:
+        g.conn.execute("UPDATE wishlist SET jid=%s"
+                     "WHERE eid=%s;", (jid ,eid))
+    except:
+        flash('Wishlist cannot be updated!')
+        return redirect(url_for('wishlist'))
     return redirect(url_for('wishlist'))
 
 

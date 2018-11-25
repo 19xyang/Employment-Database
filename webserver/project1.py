@@ -318,7 +318,7 @@ def delete_information(eid):
 # Use Flask_table module to generate html table for People
 # (third-party library)
 ##################################################################################
-class wishlist(Table):
+class wishlistresult(Table):
     eid = Col('eid')
     jid = Col('jid')
     # Called edit_wishlist() when the link is clicked.
@@ -332,13 +332,13 @@ class wishlist(Table):
 ##################################################################################
 @app.route('/wishlist', methods=['POST', 'GET'])
 def wishlist():
-    cursor = g.conn.execute("SELECT * FROM wishlist WHERE eid = %s ORDER BY jid;", (eid,))
+    cursor = g.conn.execute("SELECT * FROM wishlist WHERE eid = %s ORDER BY jid;", (session['eid'],))
     results = []
     for result in cursor:
         results.append({'eid': result['eid'],
                         'jid': result['jid']})
     cursor.close()
-    table = WishlistResults(results)
+    table = wishlistresult(results)
     table.border = True
     return render_template('wishlist.html', table=table)
 

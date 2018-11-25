@@ -100,10 +100,6 @@ def index():
         eid = session['eid']
 
         # retrieve the name of the user for greeting message
-
-        #storing sql query as a string variable protexts against sql injections (I think)
-        #qname = "SELECT name FROM Users WHERE uid = %s;"
-        #cursor = g.conn.execute(qname, (uid,))
         cursor = g.conn.execute("SELECT username FROM users "
                                "WHERE eid = %s", (eid,))
         name = cursor.next()[0]
@@ -142,7 +138,7 @@ def login():
     USERNAME = str(request.form['username'])
     PASSWORD = str(request.form['password'])
 
-    # check if there is matched user record in the db
+    # check if the user is true
     if 'eid' not in session:
         try:
             cursor = g.conn.execute("SELECT eid FROM Users "
@@ -161,7 +157,7 @@ def login():
 ##################################################################################
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
+    # remove the eid from the session if it's there
     session.pop('eid', None)
     return redirect(url_for('index'))
 
@@ -202,8 +198,7 @@ def signup():
 # the functions for each app.route needs to have different names
 #
 ##################################################################################
-# Use Flask_table module to generate html table for Tracking Account
-# (third-party library)
+# generate table for basic employee information
 ##################################################################################
 class Basicinformation(Table):
     eid = Col('eid')
@@ -219,9 +214,9 @@ class Basicinformation(Table):
     salary = Col('salary')
     type = Col('type')
     company_name = Col('company_name')
-    # Called edit_trackingaccount() when the link is clicked.
+    # Called edit_information() when the link is clicked.
     edit = LinkCol('Edit', 'edit_information', url_kwargs=dict(eid='eid'))
-    # Called delete_trackingaccount() when the link is clicked.
+    # Called delete_information() when the link is clicked.
     delete = LinkCol('Delete', 'delete_information', url_kwargs=dict(eid='eid'))
 
 
@@ -260,7 +255,7 @@ def add_information():
 
 
 ##################################################################################
-# edit a tracking account
+# edit a employee
 ##################################################################################
 @app.route('/edit_information/<int:eid>', methods=['GET', 'POST'])
 def edit_information(eid):
@@ -326,8 +321,7 @@ def delete_information(eid):
 
 
 ##################################################################################
-# Use Flask_table module to generate html table for People
-# (third-party library)
+# create table for wishlist
 ##################################################################################
 class wishlistresult(Table):
     eid = Col('eid')
@@ -339,7 +333,7 @@ class wishlistresult(Table):
 
 
 ##################################################################################
-# view people
+# view wishlist
 ##################################################################################
 @app.route('/wishlist', methods=['POST', 'GET'])
 def wishlist():
@@ -355,7 +349,7 @@ def wishlist():
 
 
 ##################################################################################
-# add new people
+# add new wishlist
 ##################################################################################
 @app.route('/add_wishlist', methods=['POST', 'GET'])
 def add_wishlist():
@@ -376,7 +370,7 @@ def add_wishlist():
 
 
 ##################################################################################
-# edit people record
+# edit wishlist
 ##################################################################################
 @app.route('/edit_wishlist/<int:eid>', methods=['GET', 'POST'])
 def edit_wishlist(eid):
@@ -401,14 +395,14 @@ def edit_wishlist(eid):
 
 
 ##################################################################################
-# delete people record
+# delete wishlist
 ##################################################################################
 @app.route('/delete_wishlist/<int:eid>', methods=['GET', 'POST'])
 def delete_wishlist(eid):
     if request.method == 'GET':
         return render_template("delete_wishlist.html", eid=eid)
 
-    # delete the item from the database
+    # delete the record from the database
     try:
         g.conn.execute("DELETE FROM wishlist WHERE eid = %s;", (eid,))
         flash('Wishlist deleted successfully!')

@@ -295,7 +295,7 @@ def edit_information(eid):
     if not eid or not name or not class_year or not major or not university or not education_level or not jid or not industry or not job_title or not company_name or not type:
         flash('Data should not be null.')
         return redirect('/edit_information/{eid}'.format(eid=eid))
-    cmd = 'UPDATE employee_have_job SET name=%s, class_year=%s, major=%s, university=%s,education_level=%s, linkedin=%s,jid=%s,industry=%s,job_title=%s,type=%s,company_name=%s, WHERE eid=%s;'
+    cmd = 'UPDATE employee_have_job SET name=%s, class_year=%s, major=%s, university=%s,education_level=%s, linkedin=%s,jid=%s,industry=%s,job_title=%s,type=%s,company_name=%s WHERE eid=%s;'
     g.conn.execute(cmd, (name,class_year,major,university,education_level,linkedin, jid, industry, job_title, type, company_name,eid))
     return redirect('/')
 
@@ -321,9 +321,9 @@ def delete_information(eid):
 class wishlist(Table):
     eid = Col('eid')
     jid = Col('jid')
-    # Called edit_people() when the link is clicked.
+    # Called edit_wishlist() when the link is clicked.
     edit = LinkCol('Edit', 'edit_wishlist', url_kwargs=dict(eid='eid'))
-    # Called delete_people() when the link is clicked.
+    # Called delete_wishlist() when the link is clicked.
     delete = LinkCol('Delete', 'delete_wishlist', url_kwargs=dict(eid='eid'))
 
 
@@ -332,7 +332,7 @@ class wishlist(Table):
 ##################################################################################
 @app.route('/wishlist', methods=['POST', 'GET'])
 def wishlist():
-    cursor = g.conn.execute("SELECT * FROM add_w WHERE eid = %s ORDER BY jid;", (eid,))
+    cursor = g.conn.execute("SELECT * FROM wishlist WHERE eid = %s ORDER BY jid;", (eid,))
     results = []
     for result in cursor:
         results.append({'eid': result['eid'],
@@ -355,7 +355,7 @@ def add_wishlist():
     if not eid or not jid:
         flash('Data should not be null.')
         return redirect(url_for('add_wishlist'))
-    cmd = 'INSERT INTO add_w VALUES (:eid1,:jid1)'
+    cmd = 'INSERT INTO wishlist VALUES (:eid1,:jid1)'
     g.conn.execute(text(cmd),eid1=eid, jid1=jid)
     return redirect(url_for('wishlist'))
 
@@ -366,7 +366,7 @@ def add_wishlist():
 @app.route('/edit_wishlist/<int:eid>', methods=['GET', 'POST'])
 def edit_wishlist(eid):
     if request.method == 'GET':
-        cursor = g.conn.execute("SELECT * FROM add_w WHERE eid = %s;", (eid,))
+        cursor = g.conn.execute("SELECT * FROM wishlist WHERE eid = %s;", (eid,))
         record = cursor.next()
         cursor.close()
         return render_template("edit_wishlist.html", eid=eid, jid=record['jid'])
@@ -377,7 +377,7 @@ def edit_wishlist(eid):
         return redirect('/edit_wishlist/{eid}'.format(eid=eid))
 
 
-    g.conn.execute("UPDATE add_w SET jid=%s"
+    g.conn.execute("UPDATE wishlist SET jid=%s"
                        "WHERE eid=%s;", (jid ,eid))
     return redirect(url_for('wishlist'))
 
@@ -392,7 +392,7 @@ def delete_wishlist(eid):
 
     # delete the item from the database
     try:
-        g.conn.execute("DELETE FROM add_w WHERE eid = %s;", (eid,))
+        g.conn.execute("DELETE FROM wishlist WHERE eid = %s;", (eid,))
         flash('Wishlist deleted successfully!')
     except:
         flash('Wishlist cannot be deleted!')

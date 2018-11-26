@@ -513,9 +513,9 @@ def delete_wishlist(eid):
     if request.method == 'GET':
         return render_template("delete_wishlist.html", eid=eid)
 
-    # delete the record from the database
+    jid = request.form['jid']
     try:
-        g.conn.execute("DELETE FROM wishlist WHERE eid = %s;", (eid,))
+        g.conn.execute("DELETE FROM wishlist WHERE eid = %s and jid=%s;", (eid,jid,))
         flash('Wishlist deleted successfully!')
     except:
         flash('Wishlist cannot be deleted!')

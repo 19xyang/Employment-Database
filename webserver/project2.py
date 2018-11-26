@@ -356,12 +356,15 @@ def add_review():
     if request.method == 'GET':
         return render_template("add_review.html")
     rid=request.form['rid']
+    content = request.form['content'].rstrip()
+    rating = request.form['rating'].rstrip()
+    hashtag = request.form['hashtag'].rstrip()
     if not rid:
         flash('Data should not be null.')
         return redirect(url_for('add_review'))
     try:
-        cmd = 'INSERT INTO review VALUES (:rid1)'
-        g.conn.execute(text(cmd),rid1=rid)
+        cmd = 'INSERT INTO review VALUES (:rid1, :content1, :rating1, :hashtag1)'
+        g.conn.execute(text(cmd),rid1=rid, content1=content, rating1=rating, hashtag1=hashtag)
     except:
         flash('Review cannot be created.')
         return redirect(url_for('add_review'))
@@ -379,8 +382,11 @@ def edit_review(rid):
         cursor.close()
         return render_template("edit_review.html", rid=rid)
 
+    content = request.form['content'].rstrip()
+    rating = request.form['rating'].rstrip()
+    hashtag = request.form['hashtag'].rstrip()
     try:
-        g.conn.execute("UPDATE review SET rid=%s"
+        g.conn.execute("UPDATE review SET content=%s, rating=%s, hashtag=%s"
                      "WHERE rid=%s;", (rid))
     except:
         flash('Review cannot be updated!')

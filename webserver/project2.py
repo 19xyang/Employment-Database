@@ -337,7 +337,7 @@ class reviewresult(Table):
 ##################################################################################
 # view review
 ##################################################################################
-app.route('/review', methods=['POST', 'GET'])
+@app.route('/review', methods=['POST', 'GET'])
 def review():
     cursor = g.conn.execute("SELECT * FROM review WHERE eid = %s ORDER BY rid;", (session['eid'],))
     results = []

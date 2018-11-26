@@ -339,7 +339,7 @@ class reviewresult(Table):
 ##################################################################################
 app.route('/review', methods=['POST', 'GET'])
 def review():
-    cursor = g.conn.execute("SELECT * FROM review WHERE rid = %s ORDER BY eid;", (session['eid'],))
+    cursor = g.conn.execute("SELECT * FROM review WHERE eid = %s ORDER BY rid;", (session['eid'],))
     results = []
     for result in cursor:
         results.append({'eid':result['eid'],

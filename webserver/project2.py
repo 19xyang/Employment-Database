@@ -396,13 +396,12 @@ def edit_review(rid):
 
     eid=request.form['eid']
     jid=request.form['jid']
-    rid=request.form['rid']
     content = request.form['content'].rstrip()
     rating = request.form['rating'].rstrip()
 
     try:
-        g.conn.execute("UPDATE review SET eid=%s, jid=$s, rid=%s, content=%s, rating=%s"
-                     "WHERE rid=%s;", (rid))
+        g.conn.execute("UPDATE review SET eid=%s, jid=%s, content=%s, rating=%s"
+                     "WHERE rid=%s;", (eid,jid,content,rating,rid))
     except:
         flash('Review cannot be updated!')
         return redirect(url_for('review'))

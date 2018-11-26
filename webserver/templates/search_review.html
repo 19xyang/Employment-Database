@@ -1,0 +1,8 @@
+{% block body %}
+<form action="/search_review/{{ jid }}" method="post">
+	<input type="jid" name="jid" placeholder="jid">
+    <input type="submit" value="Delete">
+</form>
+<br>
+<b><a href = '/view_review'>click here to go back</a></b>
+{% endblock %}

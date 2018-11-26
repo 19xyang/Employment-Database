@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>New Review</h1>
+<br>
+<form action="/add_review" method="POST">
+  <input type="text" name="rid" placeholder="rid">
+  <input type="submit" value="Add">
+</form>
+
+<b><a href = '/review'>click here to go back</a></b>
+{% endblock %}

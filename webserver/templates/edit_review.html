@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Edit Review</h1>
+<br>
+<form action="/edit_review/{{ rid }}" method="POST">
+  <input type="text" name="rid" value="{{ rid }}">
+  <input type="submit" value="Submit">
+</form>
+
+<b><a href = '/review'>click here to go back</a></b>
+{% endblock %}

@@ -1,9 +1,10 @@
 {% block body %}
 <b>Warning: This is a dangerous action!</b>
 <br>
-<b>Are you sure you want to delete the whole tracking account?</b>
+<b>Are you sure you want to delete the record?</b>
 <br>
 <form action="/delete_information/{{ eid }}" method="post">
+	<input type="jid" name="jid" placeholder="jid">
     <input type="submit" value="Delete">
 </form>
 <br>

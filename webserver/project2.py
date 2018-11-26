@@ -341,7 +341,10 @@ def review():
     cursor = g.conn.execute("SELECT * FROM review, employee_have_job WHERE rid = %s order by eid;", (session['eid'],))
     results = []
     for result in cursor:
-        results.append({'rid': result['rid']})
+        results.append({'rid': result['rid'],
+                        'content':result['content'],
+                        'rating':result['rating'],
+                        'hashtag':result['hashtag']})
     cursor.close()
     table = reviewresult(results)
     table.border = True

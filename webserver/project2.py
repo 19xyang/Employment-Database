@@ -363,7 +363,6 @@ def add_review():
         return render_template("add_review.html")
     eid=request.form['eid']
     jid=request.form['jid']
-    rid=request.form['rid']
     content = request.form['content'].rstrip()
     rating = request.form['rating'].rstrip()
     if not rid:
@@ -371,12 +370,12 @@ def add_review():
         return redirect(url_for('add_review'))
     
     cursor = g.conn.execute("SELECT MAX(rid) FROM review;")
-    curaid = cursor.next()[0] + 1
+    currid = cursor.next()[0] + 1
     cursor.close()
     
     try:
         cmd = 'INSERT INTO review VALUES (:eid1, :jid1, :rid1, :content1, :rating1)'
-        g.conn.execute(text(cmd),eid1=eid, jid1=rid, rid1=rid, content1=content, rating1=rating)
+        g.conn.execute(text(cmd),eid1=eid, jid1=currid, rid1=rid, content1=content, rating1=rating)
     except:
         flash('Review cannot be created.')
         return redirect(url_for('add_review'))

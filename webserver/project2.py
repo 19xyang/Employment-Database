@@ -250,7 +250,7 @@ def add_information():
         g.conn.execute(text(cmd),eid1=eid, name1=name, class1=class_year, major1=major, university1=university, education_level1=education_level, linkedin1=linkedin, jid1=jid, industry1=industry, job_title1=job_title, salary1=salary, type1=type, company_name1=company_name)
     except:
         flash('Information cannot be added!')
-        return redirect("add_information")
+        return redirect("information")
     return redirect(url_for('add_information'))
 
 

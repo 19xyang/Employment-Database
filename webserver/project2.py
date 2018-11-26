@@ -336,12 +336,12 @@ class reviewresult(Table):
 ##################################################################################
 # view review
 ##################################################################################
-@app.route('/review', methods=['POST', 'GET'])
+app.route('/review', methods=['POST', 'GET'])
 def review():
-    cursor = g.conn.execute("SELECT * FROM review, employee_have_job WHERE rid = %s order by eid;", (session['eid'],))
+    cursor = g.conn.execute("SELECT * FROM review WHERE rid = %s;", (session['rid'],))
     results = []
     for result in cursor:
-        results.append({'rid': result['rid'],
+        results.append({'rid':result['rid'],
                         'content':result['content'],
                         'rating':result['rating'],
                         'hashtag':result['hashtag']})
@@ -349,6 +349,7 @@ def review():
     table = reviewresult(results)
     table.border = True
     return render_template('review.html', table=table)
+
 
 
 ##################################################################################

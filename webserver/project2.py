@@ -323,10 +323,11 @@ def delete_information(eid):
 # create table for review
 ##################################################################################
 class reviewresult(Table):
+    eid = Col('eid')
+    jid = Col('jid')
     rid = Col('rid')
     content = Col('content')
     rating = Col('rating')
-    hashtag = Col('hashtag')
     # Called edit_review() when the link is clicked.
     edit = LinkCol('Edit', 'edit_review', url_kwargs=dict(rid='rid'))
     # Called delete_review() when the link is clicked.
@@ -338,13 +339,14 @@ class reviewresult(Table):
 ##################################################################################
 app.route('/review', methods=['POST', 'GET'])
 def review():
-    cursor = g.conn.execute("SELECT * FROM review WHERE rid = %s;", (session['rid'],))
+    cursor = g.conn.execute("SELECT * FROM review WHERE rid = %s ORDER BY eid;", (rid,))
     results = []
     for result in cursor:
-        results.append({'rid':result['rid'],
+        results.append({'eid':result['eid'],
+                        'jid':result['jid'],
+                        'rid':result['rid'],
                         'content':result['content'],
-                        'rating':result['rating'],
-                        'hashtag':result['hashtag']})
+                        'rating':result['rating']})
     cursor.close()
     table = reviewresult(results)
     table.border = True
@@ -359,16 +361,22 @@ def review():
 def add_review():
     if request.method == 'GET':
         return render_template("add_review.html")
+    eid=request.form['eid']
+    jid=request.form['jid']
     rid=request.form['rid']
     content = request.form['content'].rstrip()
     rating = request.form['rating'].rstrip()
-    hashtag = request.form['hashtag'].rstrip()
     if not rid:
         flash('Data should not be null.')
         return redirect(url_for('add_review'))
+    
+    cursor = g.conn.execute("SELECT MAX(rid) FROM review;")
+    curaid = cursor.next()[0] + 1
+    cursor.close()
+    
     try:
-        cmd = 'INSERT INTO review VALUES (:rid1, :content1, :rating1, :hashtag1)'
-        g.conn.execute(text(cmd),rid1=rid, content1=content, rating1=rating, hashtag1=hashtag)
+        cmd = 'INSERT INTO review VALUES (:eid1, :jid1, :rid1, :content1, :rating1)'
+        g.conn.execute(text(cmd),eid1=eid, jid1=rid, rid1=rid, content1=content, rating1=rating)
     except:
         flash('Review cannot be created.')
         return redirect(url_for('add_review'))
@@ -384,13 +392,16 @@ def edit_review(rid):
         cursor = g.conn.execute("SELECT * FROM review WHERE rid = %s;", (rid,))
         record = cursor.next()
         cursor.close()
-        return render_template("edit_review.html", rid=rid)
+        return render_template("edit_review.html", eid=record['eid'], jid=record['jid'], rid=rid, content=record['content'], rating=record['rating'])
 
+    eid=request.form['eid']
+    jid=request.form['jid']
+    rid=request.form['rid']
     content = request.form['content'].rstrip()
     rating = request.form['rating'].rstrip()
-    hashtag = request.form['hashtag'].rstrip()
+
     try:
-        g.conn.execute("UPDATE review SET content=%s, rating=%s, hashtag=%s"
+        g.conn.execute("UPDATE review SET eid=%s, jid=$s, rid=%s, content=%s, rating=%s"
                      "WHERE rid=%s;", (rid))
     except:
         flash('Review cannot be updated!')

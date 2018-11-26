@@ -365,7 +365,8 @@ def add_review():
     jid=request.form['jid']
     content = request.form['content'].rstrip()
     rating = request.form['rating'].rstrip()
-    if not rid:
+    
+    if not eid or not jid or not content or not rating:
         flash('Data should not be null.')
         return redirect(url_for('add_review'))
     

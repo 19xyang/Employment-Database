@@ -376,7 +376,7 @@ def add_review():
     
     try:
         cmd = 'INSERT INTO review VALUES (:eid1, :jid1, :rid1, :content1, :rating1)'
-        g.conn.execute(text(cmd),eid1=eid, jid1=currid, rid1=rid, content1=content, rating1=rating)
+        g.conn.execute(text(cmd),eid1=eid, jid1=jid, rid1=currid, content1=content, rating1=rating)
     except:
         flash('Review cannot be created.')
         return redirect(url_for('add_review'))

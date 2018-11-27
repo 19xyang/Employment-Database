@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+<br>
+<form action="/view_employee/{{ eid }}" method="POST">
+  <input type="company_name" name="company_name" placeholder="company_name">
+  <input type="submit" value="Submit">
+</form>
+<br>
+<br>
+{{table}}
+<br>
+<b><a href = '/'>click here to go back</a></b>
+<br>
+<br>
+<b><a href = '/logout'>click here to log out</a></b>
+{% endblock %}
